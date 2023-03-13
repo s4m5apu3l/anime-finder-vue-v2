@@ -22,7 +22,7 @@
       </button>
     </form>
 
-    <div v-if="searchResult.length > 0">
+    <div v-if="searchResult.data">
       <div
         class="md:grid-cols-3 md:gap-4 xl:grid-cols-4 w-full grid gap-2 grid-cols-2 max-w-5xl mt-10"
       >
@@ -47,7 +47,7 @@ import axios from "axios";
 
 const query = ref("");
 const animeItem = ref([]);
-const searchResult = ref([]);
+const searchResult = ref({});
 
 const myAnimeList = computed(() => {
   return animeItem.value.sort((a, b) => {
@@ -59,13 +59,15 @@ async function searchAnime() {
   await axios
     .get(`https://api.jikan.moe/v4/anime?q=${query.value}`)
     .then((res) => {
-      searchResult.value = res.data;
+      // const data = JSON.parse(res.data);
+      searchResult.value = res.data;  
     })
     .catch((error) => {
       console.error(error);
     });
 }
 searchAnime();
+
 
 const handleInput = (e) => {
   if (!e.target.value) {
