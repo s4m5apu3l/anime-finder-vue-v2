@@ -21,7 +21,8 @@
         Search
       </button>
     </form>
-    <div>
+
+    <div v-if="searchResult.length > 0">
       <div
         class="md:grid-cols-3 md:gap-4 xl:grid-cols-4 w-full grid gap-2 grid-cols-2 max-w-5xl mt-10"
       >
@@ -35,6 +36,8 @@
         </article>
       </div>
     </div>
+
+    <div v-if="animeItem.length > 0"></div>
   </div>
 </template>
 
@@ -43,11 +46,11 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 
 const query = ref("");
-const myAnime = ref([]);
+const animeItem = ref([]);
 const searchResult = ref([]);
 
 const myAnimeList = computed(() => {
-  return myAnime.value.sort((a, b) => {
+  return animeItem.value.sort((a, b) => {
     return a.title.localCompare(b.title);
   });
 });
@@ -61,10 +64,7 @@ async function searchAnime() {
     .catch((error) => {
       console.error(error);
     });
-  // searchResult.value = res.data;
-  // console.dir(searchResult);
 }
-console.dir(searchResult);
 searchAnime();
 
 const handleInput = (e) => {
