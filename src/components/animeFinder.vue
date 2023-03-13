@@ -1,27 +1,30 @@
 <template>
   <div>
     <h1 class="text-gray-500 text-3xl font-bold mb-10">Anime Finder</h1>
-    <form class="mx-auto max-w-xl flex justify-center items-center gap-4">
-      <label
-        for="email"
-        class="block  text-sm font-medium text-gray-900 dark:text-white"
-        ></label
-      >
+    <form
+      @submit.prevent="searchAnime"
+      class="mx-auto max-w-xl flex justify-center items-center gap-4"
+    >
       <input
         type="email"
         id="email"
+        placeholder="search anime..."
+        v-model="query"
+        @input="handleInput"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       />
       <button
         type="submit"
         @click.prevent="searchAnime"
-        class="flex text-center  justify-center max-w-full w-full max-w-max text-white bg-yellow hover:bg-gray-dark transition ease-linear delay-400"
+        class="flex text-center justify-center max-w-full w-full max-w-max text-white bg-yellow hover:bg-gray-dark transition ease-linear delay-400"
       >
         Search
       </button>
     </form>
-    <div v-if="searchResult.data.length > 0">
-      <div class="max-w-lg grid grid gap-4 grid-cols-4 max-w-5xl mt-10">
+    <div>
+      <div
+        class="md:grid-cols-3 md:gap-4 xl:grid-cols-4 w-full grid gap-2 grid-cols-2 max-w-5xl mt-10"
+      >
         <article v-for="anime in searchResult.data" :key="anime">
           <img
             :src="anime.images.webp.image_url"
@@ -31,7 +34,6 @@
           <h3 class="text-bol transition ease-in">{{ anime.title }}</h3>
         </article>
       </div>
-
     </div>
   </div>
 </template>
@@ -41,9 +43,8 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 
 const query = ref("");
-const myAnime = ref("");
-const searchResult = ref("");
-// const animeList = ref('')
+const myAnime = ref([]);
+const searchResult = ref([]);
 
 const myAnimeList = computed(() => {
   return myAnime.value.sort((a, b) => {
@@ -52,13 +53,25 @@ const myAnimeList = computed(() => {
 });
 
 async function searchAnime() {
-  const res = await axios.get(
-    `https://api.jikan.moe/v4/anime?q=${query.value}`
-  );
-  searchResult.value = res.data;
-  console.dir(res);
+  await axios
+    .get(`https://api.jikan.moe/v4/anime?q=${query.value}`)
+    .then((res) => {
+      searchResult.value = res.data;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  // searchResult.value = res.data;
+  // console.dir(searchResult);
 }
+console.dir(searchResult);
 searchAnime();
+
+const handleInput = (e) => {
+  if (!e.target.value) {
+    searchResult.value = [];
+  }
+};
 
 // const searchAnime =  () => {
 
